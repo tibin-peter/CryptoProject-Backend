@@ -15,6 +15,7 @@ type Config struct {
 	JWTSecret      string
 	RazorpayKey    string
 	RazorpaySecret string
+	Env            string
 }
 
 func LeadConfig() *Config {
@@ -49,15 +50,23 @@ func LeadConfig() *Config {
 			log.Fatalf("Missing required env variable: %s", key)
 		}
 	}
+	sslmode:=os.Getenv("DB_SSLMODE")
+	if sslmode ==""{
+		sslmode="disable"
+	}
 	//creating dburl
 	dbURL = fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_PORT"),
 	)
+	}
+	envMode:=os.Getenv("APP_ENV")
+	if envMode ==""{
+		envMode ="development"
 	}
 	//return the hole struct
 	return &Config{
@@ -67,5 +76,6 @@ func LeadConfig() *Config {
 		JWTSecret: os.Getenv("JWT_SECRET"),
 		RazorpayKey: os.Getenv("RAZORPAY_KEY_ID"),
 		RazorpaySecret: os.Getenv("RAZORPAY_SECRET"),
+		Env: envMode,
 	}
 }
