@@ -9,7 +9,6 @@ jobs:
   build-and-test:
     name: Continuous Integration (CI)
     runs-on: ubuntu-latest
-    defaults:
 
     steps:
     - name: Checkout Code Repository
