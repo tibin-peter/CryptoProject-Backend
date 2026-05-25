@@ -9,6 +9,9 @@ jobs:
   build-and-test:
     name: Continuous Integration (CI)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./CryptoProject-Backend
 
     steps:
     - name: Checkout Code Repository
@@ -28,6 +31,9 @@ jobs:
     name: Continuous Deployment (CD)
     needs: build-and-test # Only run deployment if the build step succeeds
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./CryptoProject-Backend
 
     steps:
     - name: Deploy to AWS EC2 via SSH
@@ -48,7 +54,5 @@ jobs:
           # Recompile your production engine binary
           go build -o crytinox_api .
           
-          # Restart the process in the background safely
-          # This kills the old running API app and restarts it immediately
-          pkill -f crytinox_api || true
-          nohup ./crytinox_api > app.log 2>&1 &
+          # Restart the production service
+          sudo systemctl restart crytinox

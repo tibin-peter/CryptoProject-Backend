@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
@@ -40,6 +41,14 @@ func main() {
 	app := fiber.New(fiber.Config{
 		BodyLimit: 20 * 1024 * 1024, //set the limit to 20mb for image uploading
 	})
+
+	//for frontend connect
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "https://crypto-project-frontend-gold.vercel.app/,http://localhost:5173",
+		AllowMethods:     "GET,POST,PUT,DELETE,PATCH,OPTIONS",
+		AllowHeaders:     "Origin, Content-Type, Accept,Authorization",
+		AllowCredentials: true,
+	}))
 
 	//setup routes
 	centralroutes.SetUp(app, db, rdb, cfg.JWTSecret, cfg.RazorpayKey, cfg.RazorpaySecret)
