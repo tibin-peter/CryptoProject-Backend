@@ -1,0 +1,54 @@
+name: Crytinox Backend Production CI/CD
+
+# Trigger the workflow every time you push to the main branch
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Continuous Integration (CI)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Go Environment
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.25.2' # Change this to match your exact Go version if needed
+
+    - name: Verify Dependencies and Build Test
+      run: |
+        go mod download
+        go build -v -o test_binary .
+
+  deploy:
+    name: Continuous Deployment (CD)
+    needs: build-and-test # Only run deployment if the build step succeeds
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to AWS EC2 via SSH
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: 22
+        script: |
+          # Step into your project directory on AWS
+          cd ~/CryptoProject-Backend
+          
+          # Fetch the latest code changes safely
+          git reset --hard origin/main
+          git pull origin main
+          
+          # Recompile your production engine binary
+          go build -o crytinox_api .
+          
+          # Restart the process in the background safely
+          # This kills the old running API app and restarts it immediately
+          pkill -f crytinox_api || true
+          nohup ./crytinox_api > app.log 2>&1 &
