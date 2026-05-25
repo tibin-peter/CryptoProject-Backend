@@ -10,8 +10,6 @@ jobs:
     name: Continuous Integration (CI)
     runs-on: ubuntu-latest
     defaults:
-      run:
-        working-directory: CryptoProject-Backend
 
     steps:
     - name: Checkout Code Repository
@@ -31,9 +29,6 @@ jobs:
     name: Continuous Deployment (CD)
     needs: build-and-test # Only run deployment if the build step succeeds
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: CryptoProject-Backend
 
     steps:
     - name: Deploy to AWS EC2 via SSH
