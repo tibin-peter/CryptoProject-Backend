@@ -62,6 +62,7 @@ func LeadConfig() *Config {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_PORT"),
+		sslmode,
 	)
 	}
 	envMode:=os.Getenv("APP_ENV")
