@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./CryptoProject-Backend
+        working-directory: CryptoProject-Backend
 
     steps:
     - name: Checkout Code Repository
@@ -20,7 +20,7 @@ jobs:
     - name: Set up Go Environment
       uses: actions/setup-go@v5
       with:
-        go-version: '1.25.2' # Change this to match your exact Go version if needed
+        go-version: '1.22' # Change this to match your exact Go version if needed
 
     - name: Verify Dependencies and Build Test
       run: |
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./CryptoProject-Backend
+        working-directory: CryptoProject-Backend
 
     steps:
     - name: Deploy to AWS EC2 via SSH
