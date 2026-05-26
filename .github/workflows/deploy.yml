@@ -13,6 +13,9 @@ jobs:
     - name: Checkout Code Repository
       uses: actions/checkout@v4
 
+    - name: Debug: List all files
+      run: ls -R
+
     - name: Set up Go Environment
       uses: actions/setup-go@v5
       with:
@@ -20,8 +23,8 @@ jobs:
 
     - name: Verify Dependencies and Build Test
       run: |
-        # Explicitly move into the directory where your go.mod lives
-        cd CryptoProject-Backend
+        # We removed the 'cd' because your files are likely in the root.
+        # If this fails, look at the 'ls -R' output in the logs to see where go.mod is.
         go mod download
         go build -v -o test_binary .
 
@@ -39,13 +42,8 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         port: 22
         script: |
-          # SSH into the server and move to your project folder
           cd ~/CryptoProject-Backend
-          
-          # Pull the latest changes from GitHub
           git reset --hard origin/main
           git pull origin main
-          
-          # Build and restart
           go build -o crytinox_api .
           sudo systemctl restart crytinox
