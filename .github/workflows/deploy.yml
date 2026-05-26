@@ -13,7 +13,7 @@ jobs:
     - name: Checkout Code Repository
       uses: actions/checkout@v4
 
-    - name: Debug: List all files
+    - name: Debug List all files
       run: ls -R
 
     - name: Set up Go Environment
