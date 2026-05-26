@@ -5,48 +5,17 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
-    name: Continuous Integration (CI)
+  debug-build:
+    name: Debug and Find Path
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Code Repository
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Set up Go Environment
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.25.2' # You can use your specific version here
-
-    - name: Verify Dependencies and Build Test
-      run: |
-        # These commands run in the root of the checked-out repository
-        go mod download
-        go build -v -o test_binary .
-
-  deploy:
-    name: Continuous Deployment (CD)
-    needs: build-and-test
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Deploy to AWS EC2 via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        port: 22
-        script: |
-          # Server-side pathing (where your app lives on the AWS machine)
-          cd ~/CryptoProject-Backend
-          
-          # Pull the latest changes
-          git reset --hard origin/main
-          git pull origin main
-          
-          # Build on the server
-          go build -o crytinox_api .
-          
-          # Restart the service
-          sudo systemctl restart crytinox
+      - name: Show me the files
+        run: |
+          echo "Current location: $(pwd)"
+          echo "Files in current location:"
+          ls -R
+          echo "Looking for go.mod:"
+          find . -name "go.mod"
