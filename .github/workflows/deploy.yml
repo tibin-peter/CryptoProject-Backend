@@ -1,6 +1,5 @@
 name: Crytinox Backend Production CI/CD
 
-# Trigger the workflow every time you push to the main branch
 on:
   push:
     branches: [ main ]
@@ -17,16 +16,18 @@ jobs:
     - name: Set up Go Environment
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22' # Change this to match your exact Go version if needed
+        go-version: '1.22'
 
     - name: Verify Dependencies and Build Test
       run: |
+        # Explicitly move into the directory where your go.mod lives
+        cd CryptoProject-Backend
         go mod download
         go build -v -o test_binary .
 
   deploy:
     name: Continuous Deployment (CD)
-    needs: build-and-test # Only run deployment if the build step succeeds
+    needs: build-and-test
     runs-on: ubuntu-latest
 
     steps:
@@ -38,15 +39,13 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         port: 22
         script: |
-          # Step into your project directory on AWS
+          # SSH into the server and move to your project folder
           cd ~/CryptoProject-Backend
           
-          # Fetch the latest code changes safely
+          # Pull the latest changes from GitHub
           git reset --hard origin/main
           git pull origin main
           
-          # Recompile your production engine binary
+          # Build and restart
           go build -o crytinox_api .
-          
-          # Restart the production service
           sudo systemctl restart crytinox
