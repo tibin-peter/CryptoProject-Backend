@@ -13,9 +13,6 @@ jobs:
     - name: Checkout Code Repository
       uses: actions/checkout@v4
 
-    - name: Debug List all files
-      run: ls -R
-
     - name: Set up Go Environment
       uses: actions/setup-go@v5
       with:
@@ -23,8 +20,7 @@ jobs:
 
     - name: Verify Dependencies and Build Test
       run: |
-        # We removed the 'cd' because your files are likely in the root.
-        # If this fails, look at the 'ls -R' output in the logs to see where go.mod is.
+        # No 'cd' needed. Files are at the root of the workspace.
         go mod download
         go build -v -o test_binary .
 
@@ -42,6 +38,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         port: 22
         script: |
+          # Server-side pathing stays as it is
           cd ~/CryptoProject-Backend
           git reset --hard origin/main
           git pull origin main
